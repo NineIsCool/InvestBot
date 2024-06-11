@@ -5,7 +5,7 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     properties:
       hibernate:
         default_schema: ${POSTGRES_SCHEMA:public}
@@ -15,7 +15,8 @@ spring:
 
   datasource:
     #jdbc:postgresql://localhost:5433/trainerslog
-    url: jdbc:postgresql://${DB_HOST:subscribes_invest_postgres}:${DB_PORT:5432}/${DB_NAME:subscribes_invest}
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:postgres}
+    #url: jdbc:postgresql://${DB_HOST:subscribes_invest_postgres}:${DB_PORT:5432}/${DB_NAME:investbot}
+    url: jdbc:postgresql://localhost:5432/investbot
+    username: postgres #${DB_USERNAME:postgres}
+    password: 2435 #${DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
