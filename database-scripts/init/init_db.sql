@@ -1,0 +1,2 @@
+CREATE DATABASE investbot;
+GRANT ALL PRIVILEGES ON DATABASE investbot TO postgres;

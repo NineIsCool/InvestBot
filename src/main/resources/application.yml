@@ -1,6 +1,8 @@
-bot:
-  token: ${BOT_TOKEN}
-
+services:
+  tinkoff-invest:
+    url: ""
+  cbr-currencies:
+    url: ""
 spring:
   jpa:
     open-in-view: false
@@ -14,9 +16,9 @@ spring:
             non_contextual_creation: true
 
   datasource:
-    #jdbc:postgresql://localhost:5433/trainerslog
-    #url: jdbc:postgresql://${DB_HOST:subscribes_invest_postgres}:${DB_PORT:5432}/${DB_NAME:investbot}
-    url: jdbc:postgresql://localhost:5432/investbot
-    username: postgres #${DB_USERNAME:postgres}
-    password: 2435 #${DB_PASSWORD:postgres}
+    url: jdbc:postgresql://${DB_HOST:subscribes_invest_postgres}:${DB_PORT:5432}/${DB_NAME:investbot}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
+server:
+  port: 8080

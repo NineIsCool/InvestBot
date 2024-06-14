@@ -1,0 +1,49 @@
+version: "3.9"
+services:
+  invest-bot:
+    container_name: invest-bot
+    build:
+      dockerfile: Dockerfile
+    hostname: invest.bot
+    ports:
+      - "8080:8080"
+    networks:
+      - invest-network
+    depends_on:
+      - postgres
+  cbr_service:
+    container_name: cbr_service
+    image: nineisfuture/sbrservice:v01
+    hostname: cbr.service
+    ports:
+      - "8081:8081"
+    networks:
+      - invest-network
+  tinkoff_stocks_service:
+    container_name: tinkoff_stocks_service
+    image: nineisfuture/tinkoffstocks:v01
+    env_file:
+      - invest.env
+    hostname: tinkoff.stocks_service
+    ports:
+      - "8082:8082"
+    networks:
+      - invest-network
+
+  postgres:
+    image: postgres:13.3
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    hostname: invest.postgres
+    volumes:
+      - ./database-scripts/init:/docker-entrypoint-init_db.d
+    ports:
+      - "6432:5432"
+    networks:
+      - invest-network
+
+networks:
+  invest-network:
+    driver: bridge
