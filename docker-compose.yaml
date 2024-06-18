@@ -4,6 +4,8 @@ services:
     container_name: invest-bot
     build:
       dockerfile: Dockerfile
+    env_file:
+      - invest.env
     hostname: invest.bot
     ports:
       - "8080:8080"
@@ -31,14 +33,14 @@ services:
       - invest-network
 
   postgres:
-    image: postgres:13.3
+    image: postgres:15
     environment:
       POSTGRES_DB: "postgres"
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
     hostname: invest.postgres
     volumes:
-      - ./database-scripts/init:/docker-entrypoint-init_db.d
+      - ./database-scripts/init:/docker-entrypoint-initdb.d
     ports:
       - "6432:5432"
     networks:

@@ -1,5 +1,8 @@
 package com.example.investbot.service;
 
+import com.example.investbot.adapter.client.CurrencyClient;
+import com.example.investbot.adapter.client.StockClient;
+import com.example.investbot.adapter.dto.currency.CurrencyRateRequest;
 import com.example.investbot.bot.InvestBot;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
@@ -14,13 +17,22 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @Log4j2
-@Transactional
 public class InvestBotService {
     UserService userService;
+    CurrencyClient currencyClient;
 
     public String startBot(Long chatId){
         String text = "Hello";
         userService.registerUser(chatId);
         return text;
+    }
+
+    public String findInstrument(String keySearch, String type){
+        return "";
+    }
+
+    public String findCurrency(String charCode){
+        CurrencyRateRequest currencyRateRequest = currencyClient.getCurrency(charCode);
+        return currencyRateRequest.name();
     }
 }

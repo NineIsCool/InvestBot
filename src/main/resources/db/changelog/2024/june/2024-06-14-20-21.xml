@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="2024-06-14-20-21" author="AlexeevNR" context="prod">
+
+        <createSequence incrementBy="30" sequenceName="hibernate_sequence" startValue="1"/>
+
+        <createTable tableName="subscribes">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_subscribes"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="key_search" type="VARCHAR(255)"/>
+        </createTable>
+
+        <createTable tableName="user_entity">
+            <column name="chat_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user_entity"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="user_subscribes">
+            <column name="subscribe_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user_subscribes"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user_subscribes"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="subscribe_id" baseTableName="user_subscribes" constraintName="fk_usesub_on_subscribe_entity" referencedColumnNames="id" referencedTableName="subscribes"/>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_subscribes" constraintName="fk_usesub_on_user_entity" referencedColumnNames="chat_id" referencedTableName="user_entity"/>
+
+        <createSequence incrementBy="30" sequenceName="hibernate_sequence" startValue="1"/>
+
+    </changeSet>
+</databaseChangeLog>
