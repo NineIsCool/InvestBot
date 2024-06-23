@@ -15,7 +15,7 @@ services:
       - postgres
   cbr_service:
     container_name: cbr_service
-    image: nineisfuture/sbrservice:v01
+    image: nineisfuture/sbrservice:v02
     hostname: cbr.service
     ports:
       - "8081:8081"
@@ -23,12 +23,12 @@ services:
       - invest-network
   tinkoff_stocks_service:
     container_name: tinkoff_stocks_service
-    image: nineisfuture/tinkoffstocks:v01
+    image: nineisfuture/tinkoffstocks:v02
     env_file:
       - invest.env
-    hostname: tinkoff.stocks_service
+    hostname: tinkoff.stocks.service
     ports:
-      - "8082:8082"
+      - "8083:8083"
     networks:
       - invest-network
 
@@ -38,7 +38,7 @@ services:
       POSTGRES_DB: "postgres"
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
-    hostname: invest.postgres
+    hostname: invest_postgres
     volumes:
       - ./database-scripts/init:/docker-entrypoint-initdb.d
     ports:

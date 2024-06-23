@@ -23,9 +23,9 @@ import java.util.Set;
 public class SubscribeService {
     SubscribeRepository subscribeRepository;
     UserRepository userRepository;
-    public void subscribeItem(Long chatId, String type, String keySearch){
+    public void subscribeItem(Long chatId, String type, String keySearch, String name){
         Optional<SubscribeEntity> subscribe = subscribeRepository.findByKeySearch(keySearch);
-        UserEntity userEntity = userRepository.findByChatId(chatId);
+        UserEntity userEntity = userRepository.findByChatId(chatId).get();
         if (!subscribe.isEmpty()){
             subscribe.get().getUserEntities().add(userEntity);
             userEntity.getSubscribeItems().add(subscribe.get());
@@ -33,6 +33,7 @@ public class SubscribeService {
             SubscribeEntity subscribeEntity = new SubscribeEntity();
             subscribeEntity.setType(type);
             subscribeEntity.setKeySearch(keySearch);
+            subscribeEntity.setName(name);
             Set<UserEntity> userEntitySet = new HashSet<>();
             userEntitySet.add(userEntity);
             subscribeEntity.setUserEntities(userEntitySet);

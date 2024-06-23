@@ -23,14 +23,16 @@ public class UserService {
     UserRepository userRepository;
     SubscribeRepository subscribeRepository;
     public void registerUser(long chatId){
-        UserEntity userEntity = new UserEntity();
-        userEntity.setChatId(chatId);
-        userEntity.setSubscribeItems(new HashSet<>());
-        userRepository.save(userEntity);
+        if (userRepository.findByChatId(chatId).isEmpty()){
+            UserEntity userEntity = new UserEntity();
+            userEntity.setChatId(chatId);
+            userEntity.setSubscribeItems(new HashSet<>());
+            userRepository.save(userEntity);
+        }
     }
 
     public List<SubscribeEntity> getAllSubscribes(long chatId){
-        UserEntity userEntity = userRepository.findByChatId(chatId);
+        UserEntity userEntity = userRepository.findByChatId(chatId).get();
         return subscribeRepository.findByUserEntities(userEntity);
     }
 }

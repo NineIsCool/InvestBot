@@ -1,5 +1,6 @@
-package com.example.investbot.bot.action;
+package com.example.investbot.adapter.bot.action.subscribe;
 
+import com.example.investbot.adapter.bot.action.BotAction;
 import com.example.investbot.domain.SubscribeEntity;
 import com.example.investbot.service.UserService;
 import lombok.AccessLevel;
@@ -7,17 +8,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-public class AllSubscribesAction implements BotAction{
+public class AllSubscribesAction implements BotAction {
     UserService userService;
     @Override
     public BotApiMethod handle(Update update) {
-        var msg = update.getMessage();
-        var chatId = msg.getChatId();
+        Message msg = update.getMessage();
+        Long chatId = msg.getChatId();
         StringBuilder textBuilder = new StringBuilder();
         List<SubscribeEntity> subscribes = userService.getAllSubscribes(chatId);
         if (subscribes==null || subscribes.isEmpty()){

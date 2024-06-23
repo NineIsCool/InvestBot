@@ -1,4 +1,4 @@
-package com.example.investbot.bot.action;
+package com.example.investbot.adapter.bot.action;
 
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;

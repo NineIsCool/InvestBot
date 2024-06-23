@@ -1,6 +1,6 @@
 package com.example.investbot.config;
 
-import com.example.investbot.bot.InvestBot;
+import com.example.investbot.adapter.bot.InvestBot;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
