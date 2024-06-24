@@ -3,6 +3,7 @@ package com.example.investbot.service;
 import com.example.investbot.adapter.client.CurrencyClient;
 import com.example.investbot.adapter.client.StockClient;
 import com.example.investbot.adapter.dto.currency.CurrencyRateRequest;
+import com.example.investbot.service.mapper.CurrencyMapper;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class InvestService {
     UserService userService;
     CurrencyClient currencyClient;
     StockClient stockClient;
+    CurrencyMapper currencyMapper;
 
     public String findInstrument(String keySearch, String type){
         return stockClient.findInstrument(keySearch,type).get(0).name();
@@ -28,15 +30,12 @@ public class InvestService {
 
     public String findCurrency(String charCode){
         CurrencyRateRequest currencyRateRequest = currencyClient.getCurrency(charCode);
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String date = dtf.format(currencyRateRequest.date());
-        String currencyResponse = String.format("%s (%s)\nНоминал: %d\nСтоимость: %s %s\nИнформация актуальна на %sг.",
-                currencyRateRequest.name(),
-                currencyRateRequest.charCode(),
-                currencyRateRequest.nominal(),
-                currencyRateRequest.rate().value(),
-                currencyRateRequest.rate().charCode(),
-                date);
-        return currencyResponse;
+        return currencyMapper.currencyToString(currencyRateRequest);
     }
+    public String convertCurrency(String charCode, String convertCharCode){
+        CurrencyRateRequest convertedCurrency = currencyClient.convertCurrency(charCode,convertCharCode);
+        return currencyMapper.currencyToString(convertedCurrency);
+    }
+
+
 }

@@ -6,7 +6,6 @@ import com.example.investbot.adapter.bot.action.FindAction;
 import com.example.investbot.adapter.bot.action.StartAction;
 import com.example.investbot.adapter.bot.action.currency.FindCurrency;
 import com.example.investbot.adapter.bot.action.subscribe.AllSubscribesAction;
-import com.example.investbot.bot.action.*;
 import com.example.investbot.adapter.bot.action.currency.ConvertCurrency;
 import com.example.investbot.adapter.bot.action.subscribe.SubscribeItemAction;
 import com.example.investbot.service.InvestService;
@@ -52,7 +51,7 @@ public class InvestBot extends TelegramLongPollingBot {
                 "/find", new FindAction(investService),
                 "/findCurrency", new FindCurrency(investService),
                 "/subscribe", new SubscribeItemAction(subscribeService),
-                "/convertCurrency", new ConvertCurrency()
+                "/convertCurrency", new ConvertCurrency(investService)
         );
     }
 
@@ -73,13 +72,8 @@ public class InvestBot extends TelegramLongPollingBot {
         } else if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
             String chatId = update.getCallbackQuery().getMessage().getChatId().toString();
-            BotApiMethod msg;
-            if (!bindingBy.isEmpty()){
-                msg = actions.get(bindingBy.get(chatId)).callback(update);
-            }else {
-                msg = actions.get(callbackData).callback(update);
-            }
             bindingBy.remove(chatId);
+            BotApiMethod msg = actions.get(callbackData).handle(update);
             bindingBy.put(chatId,callbackData);
             sendMessage(msg);
         }
