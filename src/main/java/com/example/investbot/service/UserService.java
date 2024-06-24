@@ -30,9 +30,4 @@ public class UserService {
             userRepository.save(userEntity);
         }
     }
-
-    public List<SubscribeEntity> getAllSubscribes(long chatId){
-        UserEntity userEntity = userRepository.findByChatId(chatId).get();
-        return subscribeRepository.findByUserEntities(userEntity);
-    }
 }

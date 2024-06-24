@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -27,9 +28,9 @@ public class FindCurrency implements BotAction {
 
     @Override
     public BotApiMethod callback(Update update) {
-        var msg = update.getMessage();
-        var chatId = msg.getChatId();
-        var findKey = msg.getText();
+        Message msg = update.getMessage();
+        Long chatId = msg.getChatId();
+        String findKey = msg.getText();
         String currency = investService.findCurrency(findKey);
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);

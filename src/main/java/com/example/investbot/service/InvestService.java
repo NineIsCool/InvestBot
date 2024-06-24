@@ -19,7 +19,6 @@ import java.time.format.DateTimeFormatter;
 @Log4j2
 @Transactional
 public class InvestService {
-    UserService userService;
     CurrencyClient currencyClient;
     StockClient stockClient;
     CurrencyMapper currencyMapper;

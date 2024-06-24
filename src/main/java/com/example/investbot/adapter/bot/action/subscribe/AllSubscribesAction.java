@@ -2,6 +2,7 @@ package com.example.investbot.adapter.bot.action.subscribe;
 
 import com.example.investbot.adapter.bot.action.BotAction;
 import com.example.investbot.domain.SubscribeEntity;
+import com.example.investbot.service.SubscribeService;
 import com.example.investbot.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -15,25 +16,30 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class AllSubscribesAction implements BotAction {
-    UserService userService;
+    SubscribeService subscribeService;
     @Override
     public BotApiMethod handle(Update update) {
         Message msg = update.getMessage();
         Long chatId = msg.getChatId();
         StringBuilder textBuilder = new StringBuilder();
-        List<SubscribeEntity> subscribes = userService.getAllSubscribes(chatId);
+        List<SubscribeEntity> subscribes = subscribeService.getAllSubscribes(chatId);
         if (subscribes==null || subscribes.isEmpty()){
             textBuilder.append("У вас нет активных подписок");
         }else {
-            for (SubscribeEntity sub:subscribes) {
-                textBuilder.append(sub.getName()+"\n");
+            textBuilder.append("Ваши подписки:\n");
+            for (int i = 0; i < subscribes.size(); i++) {
+                textBuilder.append((i+1)+". "+subscribes.get(i).getName()+"("+subscribes.get(i).getKeySearch()+")"+"\n");
             }
+            textBuilder.append("(введите номер инструмента чтобы узнать о нем подробнее)");
         }
         return new SendMessage(chatId.toString(), textBuilder.toString());
     }
 
     @Override
     public BotApiMethod callback(Update update) {
-        return handle(update);
+        Message msg = update.getMessage();
+        Long chatId = msg.getChatId();
+        int findIndex = Integer.parseInt(msg.getText());
+        return new SendMessage(chatId.toString(),subscribeService.findSubscribeItem(chatId,findIndex));
     }
 }

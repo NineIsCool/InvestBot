@@ -47,7 +47,7 @@ public class InvestBot extends TelegramLongPollingBot {
                                 "/mySubscribes - Просмотр текущих инструментов в подписке"),
                         userService
                 ),
-                "/mySubscribes", new AllSubscribesAction(userService),
+                "/mySubscribes", new AllSubscribesAction(subscribeService),
                 "/find", new FindAction(investService),
                 "/findCurrency", new FindCurrency(investService),
                 "/subscribe", new SubscribeItemAction(subscribeService),

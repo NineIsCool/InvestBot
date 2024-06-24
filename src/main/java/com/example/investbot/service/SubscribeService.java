@@ -12,6 +12,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -23,6 +24,12 @@ import java.util.Set;
 public class SubscribeService {
     SubscribeRepository subscribeRepository;
     UserRepository userRepository;
+    InvestService investService;
+
+    public List<SubscribeEntity> getAllSubscribes(long chatId){
+        UserEntity userEntity = userRepository.findByChatId(chatId).get();
+        return subscribeRepository.findByUserEntities(userEntity);
+    }
     public void subscribeItem(Long chatId, String type, String keySearch, String name){
         Optional<SubscribeEntity> subscribe = subscribeRepository.findByKeySearch(keySearch);
         UserEntity userEntity = userRepository.findByChatId(chatId).get();
@@ -41,4 +48,13 @@ public class SubscribeService {
             subscribeRepository.save(subscribeEntity);
         }
     }
+    public String findSubscribeItem(Long chatId, int indexItem){
+        SubscribeEntity subscribeEntity = getAllSubscribes(chatId).get(indexItem-1);
+        if (subscribeEntity.getType().equals("currency")){
+            return investService.findCurrency(subscribeEntity.getKeySearch());
+        }else {
+            return "not work";
+        }
+    }
+
 }
