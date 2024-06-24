@@ -4,9 +4,10 @@ package com.example.investbot.adapter.bot;
 import com.example.investbot.adapter.bot.action.BotAction;
 import com.example.investbot.adapter.bot.action.FindAction;
 import com.example.investbot.adapter.bot.action.StartAction;
-import com.example.investbot.adapter.bot.action.currency.FindCurrency;
-import com.example.investbot.adapter.bot.action.subscribe.AllSubscribesAction;
 import com.example.investbot.adapter.bot.action.currency.ConvertCurrency;
+import com.example.investbot.adapter.bot.action.currency.FindCurrency;
+import com.example.investbot.adapter.bot.action.stock.FindInstrumentList;
+import com.example.investbot.adapter.bot.action.subscribe.AllSubscribesAction;
 import com.example.investbot.adapter.bot.action.subscribe.SubscribeItemAction;
 import com.example.investbot.service.InvestService;
 import com.example.investbot.service.SubscribeService;
@@ -49,9 +50,10 @@ public class InvestBot extends TelegramLongPollingBot {
                 ),
                 "/mySubscribes", new AllSubscribesAction(subscribeService),
                 "/find", new FindAction(investService),
-                "/findCurrency", new FindCurrency(investService),
                 "/subscribe", new SubscribeItemAction(subscribeService),
-                "/convertCurrency", new ConvertCurrency(investService)
+                "/findCurrency", new FindCurrency(investService),
+                "/convertCurrency", new ConvertCurrency(investService),
+                "/findInstrumentList", new FindInstrumentList(investService)
         );
     }
 
@@ -66,15 +68,22 @@ public class InvestBot extends TelegramLongPollingBot {
                 sendMessage(msg);
             } else if (bindingBy.containsKey(chatId)) {
                 var msg = actions.get(bindingBy.get(chatId)).callback(update);
-                bindingBy.remove(chatId);
+                //bindingBy.remove(chatId);
                 sendMessage(msg);
             }
         } else if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
             String chatId = update.getCallbackQuery().getMessage().getChatId().toString();
-            bindingBy.remove(chatId);
-            BotApiMethod msg = actions.get(callbackData).handle(update);
-            bindingBy.put(chatId,callbackData);
+            BotApiMethod msg;
+            if (callbackData.equals("/goInstrumentList")){
+                msg = actions.get("/findInstrumentList").handle(update);
+                bindingBy.remove(chatId);
+                bindingBy.put(chatId,"/findInstrumentList");
+            }else {
+                msg = actions.get(callbackData).handle(update);
+                bindingBy.remove(chatId);
+                bindingBy.put(chatId,callbackData);
+            }
             sendMessage(msg);
         }
     }

@@ -1,6 +1,6 @@
 service:
   tinkoff-invest:
-    url: "http://tinkoff.stocks.service:8083/api/tinkoff"
+    url: "http://localhost:8083/api/tinkoff" #"http://tinkoff.stocks.service:8083/api/tinkoff"
   cbr-currencies:
     url: "http://localhost:8081/api/cbr/currency" #"http://cbr.service:8081/api/cbr/currency"
 spring:

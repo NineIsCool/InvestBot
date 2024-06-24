@@ -1,6 +1,7 @@
 package com.example.investbot.adapter.bot.action;
 
 import com.example.investbot.adapter.bot.action.currency.FindCurrency;
+import com.example.investbot.adapter.bot.action.stock.FindInstrumentList;
 import com.example.investbot.service.InvestService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class FindAction implements BotAction {
         currencyButton.setCallbackData("/findCurrency");
         InlineKeyboardButton stocksButton = new InlineKeyboardButton();
         stocksButton.setText("Акции");
-        stocksButton.setCallbackData("/findStock");
+        stocksButton.setCallbackData("/findInstrumentList");
         rowButtons.add(currencyButton);
         rowButtons.add(stocksButton);
         rowsButtons.add(rowButtons);
@@ -46,12 +47,15 @@ public class FindAction implements BotAction {
     @Override
     public BotApiMethod callback(Update update) {
         var chatId = update.getCallbackQuery().getMessage().getChatId().toString();
-        if (update.getCallbackQuery().getData().equals("/findCurrency")){
-            FindCurrency findCurrency = new FindCurrency(investService);
-            return findCurrency.handle(update);
-        }else {
-            System.out.println("dslk");
-            return null;
+        switch (update.getCallbackQuery().getData()){
+            case "/findCurrency":
+                FindCurrency findCurrency = new FindCurrency(investService);
+                return findCurrency.handle(update);
+            case "/findInstrumentList":
+                FindInstrumentList findInstrumentList = new FindInstrumentList(investService);
+                return findInstrumentList.handle(update);
+            default:
+                return null;
         }
     }
 }
