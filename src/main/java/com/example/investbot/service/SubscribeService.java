@@ -53,7 +53,7 @@ public class SubscribeService {
         if (subscribeEntity.getType().equals("currency")){
             return investService.findCurrency(subscribeEntity.getKeySearch());
         }else {
-            return "not work";
+            return investService.getStockByUID(subscribeEntity.getKeySearch());
         }
     }
 

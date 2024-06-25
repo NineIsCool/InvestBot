@@ -3,6 +3,7 @@ package com.example.investbot.service;
 import com.example.investbot.adapter.client.CurrencyClient;
 import com.example.investbot.adapter.client.StockClient;
 import com.example.investbot.adapter.dto.currency.CurrencyRateRequest;
+import com.example.investbot.adapter.dto.stock.FullStockRequest;
 import com.example.investbot.adapter.dto.stock.PriceRequest;
 import com.example.investbot.adapter.dto.stock.StockRequest;
 import com.example.investbot.adapter.dto.stock.StockShortRequest;
@@ -45,5 +46,18 @@ public class InvestService {
         StockRequest stock=  stockClient.getStock(uid);
         PriceRequest price = stockClient.priceStock(uid);
         return stockMapper.stockToString(stock,price);
+    }
+    public String convertStock(String stock, String convertKeySearch){
+        FullStockRequest stockRequest = stockMapper.stringToStock(stock);
+        CurrencyRateRequest currencyRateRequest = currencyClient.convertCurrency(stockRequest.currency(),convertKeySearch);
+        double convertedPrice = stockRequest.lastPrice()*currencyRateRequest.rate().value().doubleValue();
+        FullStockRequest convertedStock = new FullStockRequest(
+                stockRequest.name(),
+                stockRequest.uid(),
+                stockRequest.lot(),
+                convertedPrice,
+                convertKeySearch.toUpperCase(),
+                stockRequest.date());
+        return stockMapper.fullStockToString(convertedStock);
     }
 }

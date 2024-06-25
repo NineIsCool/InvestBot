@@ -10,7 +10,10 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -40,6 +43,21 @@ public class FindStock implements BotAction {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
         sendMessage.setText(text);
+
+        InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowsButtons = new ArrayList<>();
+        List<InlineKeyboardButton> rowButtons = new ArrayList<>();
+        InlineKeyboardButton subscribeButton = new InlineKeyboardButton();
+        subscribeButton.setText("Подписаться");
+        subscribeButton.setCallbackData("/subscribe");
+        InlineKeyboardButton convertButton = new InlineKeyboardButton();
+        convertButton.setText("Конвертировать");
+        convertButton.setCallbackData("/convertStock");
+        rowButtons.add(subscribeButton);
+        rowButtons.add(convertButton);
+        rowsButtons.add(rowButtons);
+        keyboardMarkup.setKeyboard(rowsButtons);
+        sendMessage.setReplyMarkup(keyboardMarkup);
         return sendMessage;
     }
 }

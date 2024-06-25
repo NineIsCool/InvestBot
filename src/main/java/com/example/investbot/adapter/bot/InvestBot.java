@@ -2,6 +2,7 @@ package com.example.investbot.adapter.bot;
 
 
 import com.example.investbot.adapter.bot.action.BotAction;
+import com.example.investbot.adapter.bot.action.ConvertAction;
 import com.example.investbot.adapter.bot.action.FindAction;
 import com.example.investbot.adapter.bot.action.StartAction;
 import com.example.investbot.adapter.bot.action.currency.ConvertCurrency;
@@ -52,7 +53,8 @@ public class InvestBot extends TelegramLongPollingBot {
                 "/find", new FindAction(investService),
                 "/subscribe", new SubscribeItemAction(subscribeService),
                 "/findCurrency", new FindCurrency(investService),
-                "/convertCurrency", new ConvertCurrency(investService),
+                "/convertCurrency", new ConvertAction(investService),
+                "/convertStock", new ConvertAction(investService),
                 "/findInstrumentList", new FindInstrumentList(investService)
         );
     }
