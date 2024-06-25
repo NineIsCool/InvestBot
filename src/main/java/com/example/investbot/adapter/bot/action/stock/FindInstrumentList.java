@@ -16,15 +16,17 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class FindInstrumentList implements BotAction {
-    final InvestService investService;
-    final ConcurrentHashMap<Long, List<StockShortRequest>> foundStockMap = new ConcurrentHashMap<>();
-    int page;
+    InvestService investService;
+    ConcurrentHashMap<Long, List<StockShortRequest>> foundStockMap = new ConcurrentHashMap<>();
+    ConcurrentHashMap<Long,Integer> page = new ConcurrentHashMap<>();
 
     @Override
     public BotApiMethod handle(Update update) {
@@ -46,7 +48,10 @@ public class FindInstrumentList implements BotAction {
                 if (!findKey.matches("\\d+")){
                     return new SendMessage(chatId.toString(),"Данный индекс неверен");
                 }
-                return new FindStock(foundStockMap,investService).handle(update);
+                List<StockShortRequest> fstocks = foundStockMap.get(chatId);
+                foundStockMap.remove(chatId);
+                page.remove(chatId);
+                return new FindStock(fstocks,investService).handle(update);
             }else {
                 return getListStocks(findKey,chatId);
             }
@@ -54,17 +59,17 @@ public class FindInstrumentList implements BotAction {
             Long chatId = update.getCallbackQuery().getMessage().getChatId();
             Message message = (Message) update.getCallbackQuery().getMessage();
             if (update.getCallbackQuery().getData().equals("/goInstrumentList")){
-                page+=1;
+                page.put(chatId,page.getOrDefault(chatId,0)+1);
             }else {
-                page-=1;
+                page.put(chatId,page.getOrDefault(chatId,0)-1);
             }
             Integer messageId = update.getCallbackQuery().getMessage().getMessageId();
             EditMessageText editMessageText = new EditMessageText();
             editMessageText.setChatId(chatId);
             editMessageText.setMessageId(messageId);
             List<StockShortRequest> stocks = foundStockMap.get(chatId);
-            editMessageText.setText(stocksToString(stocks));
-            editMessageText.setReplyMarkup(addButtons(stocks.size()));
+            editMessageText.setText(stocksToString(stocks,chatId));
+            editMessageText.setReplyMarkup(addButtons(stocks.size(),chatId));
             return editMessageText;
         }
         return null;
@@ -73,26 +78,26 @@ public class FindInstrumentList implements BotAction {
 
     private SendMessage getListStocks(String findKey, Long chatId){
         List<StockShortRequest> foundStock = investService.findInstrument(findKey,"share");
-        String text = stocksToString(foundStock);
+        String text = stocksToString(foundStock,chatId);
         foundStockMap.put(chatId,foundStock);
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
         sendMessage.setText(text);
-        sendMessage.setReplyMarkup(addButtons(foundStock.size()));
+        sendMessage.setReplyMarkup(addButtons(foundStock.size(),chatId));
         return sendMessage;
     }
 
-    private InlineKeyboardMarkup addButtons(int listSize){
+    private InlineKeyboardMarkup addButtons(int listSize, Long chatId){
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsButtons = new ArrayList<>();
         List<InlineKeyboardButton> rowButtons = new ArrayList<>();
-        if ((page-1)*15>=0){
+        if ((page.getOrDefault(chatId,0)-1)*15>=0){
             InlineKeyboardButton backButton = new InlineKeyboardButton();
             backButton.setText("<-");
             backButton.setCallbackData("/findInstrumentList");
             rowButtons.add(backButton);
         }
-        if (15+(page+1)*15<listSize){
+        if (15+page.getOrDefault(chatId,0)*15<listSize){
             InlineKeyboardButton goButton = new InlineKeyboardButton();
             goButton.setText("->");
             goButton.setCallbackData("/goInstrumentList");
@@ -103,12 +108,12 @@ public class FindInstrumentList implements BotAction {
         return keyboardMarkup;
     }
 
-    private String stocksToString(List<StockShortRequest> foundStock){
+    private String stocksToString(List<StockShortRequest> foundStock, Long chatId){
         if (foundStock.isEmpty()){
             return "По вашему запросу ничего не найдено.";
         }
-        StringBuilder text = new StringBuilder("По вашему запросу найдено("+(page+1)+" стр.):\n");
-        for (int i = page*15; i < 15+page*15; i++) {
+        StringBuilder text = new StringBuilder("По вашему запросу найдено("+(page.getOrDefault(chatId,0)+1)+" стр.):\n");
+        for (int i = page.getOrDefault(chatId,0)*15; i < 15+page.getOrDefault(chatId,0)*15; i++) {
             if (i>=foundStock.size()){
                 break;
             }

@@ -15,12 +15,11 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class FindStock implements BotAction {
-    ConcurrentHashMap<Long, List<StockShortRequest>> foundStocks;
+    List<StockShortRequest> foundStocks;
     InvestService investService;
     @Override
     public BotApiMethod handle(Update update) {
@@ -35,11 +34,10 @@ public class FindStock implements BotAction {
         return handle(update);
     }
     private SendMessage getStock(int index, Long chatId){
-        List<StockShortRequest> stocks = foundStocks.get(chatId);
-        if (stocks.size()<=index-1||index-1<0){
+        if (foundStocks.size()<=index-1||index-1<0){
             return new SendMessage(chatId.toString(),"Данный индекс не найден");
         }
-        String text = investService.getStockByUID(stocks.get(index-1).uid());
+        String text = investService.getStockByUID(foundStocks.get(index-1).uid());
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
         sendMessage.setText(text);
